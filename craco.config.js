@@ -1,6 +1,6 @@
 const CracoLessPlugin = require("craco-less");
 const TerserPlugin = require("terser-webpack-plugin");
-const SentryWebpackPlugin = require("@sentry/webpack-plugin");
+// const SentryWebpackPlugin = require("@sentry/webpack-plugin");
 
 module.exports = {
   webpack: {

@@ -1,46 +1,65 @@
-# Getting Started with Create React App
+# 1. 设置环境变量
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+```
+cp .env.example .env.local
 
-## Available Scripts
+```
 
-In the project directory, you can run:
+编写.env.local, 写入适当的值
 
-### `npm start`
+# 2. 初始化
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+安装依赖
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```
+yarn install
+```
 
-### `npm test`
+初始化 SDK
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```ts
+Sentry.init({
+  dsn: process.env.REACT_APP_SENTRY_DSN,
+  integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
+  enableTracing: false,
+  // Session Replay
+  replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+  replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+  // 自定义tag
+  beforeSend: (event) => {
+    Object.assign(event.tags || {}, {
+      transaction: "sentry-frontend",
+      reacApp: "sentry-frontend-demo",
+    });
+    return event;
+  },
+  // 发布版本(与source map有关)
+  release: "demo",
+  // 多环境支持
+  environment: process.env.REACT_APP_STAGE,
+});
+```
 
-### `npm run build`
+# 3. 构建和上传
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+# 构建
+yarn build:local
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# 上传
+export SENTRY_AUTH_TOKEN=ccc
+export SENTRY_ORG=ddd
+export SENTRY_PROJECT=eee
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+yarn sentry-cli releases new demo
+yarn sentry-cli sourcemaps upload build --release=demo
+yarn sentry-cli releases finalize demo
+```
 
-### `npm run eject`
+# 4. 测试验证
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```bash
+caddy file-server --listen :3000 --root build
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+启动本地页面, 点击 button 触发错误, 在 sentry 控制台查看

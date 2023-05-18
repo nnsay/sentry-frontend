@@ -7,9 +7,6 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
         <a
           className="App-link"
           href="https://reactjs.org"
@@ -22,6 +19,7 @@ function App() {
         <button
           onClick={() => {
             console.log("test error");
+            console.log("test error");
             throw new Error("test");
           }}
         >
@@ -31,6 +29,7 @@ function App() {
         <button
           onClick={() => {
             setTimeout(() => {
+              console.log("timeout error");
               console.log("timeout error");
               throw new Error("timeout");
             }, 1000);
