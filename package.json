@@ -27,7 +27,9 @@
     "build:local": "env-cmd -f .env.local craco build",
     "test": "react-scripts test",
     "test:sentry": "yarn build:local && find ./build  -name \"*.map\" -exec rm -rf {} \\; && caddy file-server --listen :3000 --root ./build",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "sentry": "sentry-cli releases new demo && sentry-cli sourcemaps upload build --release=demo && sentry-cli releases finalize demo",
+    "caddy": "caddy file-server --listen :3000 --root build"
   },
   "eslintConfig": {
     "extends": [
