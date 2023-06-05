@@ -51,6 +51,7 @@ export SENTRY_AUTH_TOKEN=ccc
 export SENTRY_ORG=ddd
 export SENTRY_PROJECT=eee
 
+yarn sentry-cli sourcemaps inject build # 使用debug id后可以不用关心source map路径
 yarn sentry-cli releases new demo
 yarn sentry-cli sourcemaps upload build --release=demo
 yarn sentry-cli releases finalize demo
