@@ -1,6 +1,7 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
+import * as Sentry from "@sentry/react";
 
 function App() {
   return (
@@ -36,6 +37,14 @@ function App() {
           }}
         >
           Try catch error
+        </button>
+        <br />
+        <button
+          onClick={() => {
+            Sentry.captureMessage("Hello world");
+          }}
+        >
+          send message
         </button>
         <br />
       </header>
